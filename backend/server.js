@@ -4,6 +4,12 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
+
+app.get("/", (req, res) => {
+  res.send("✅ Backend running");
+});
+
+
 app.use(express.json());
 
 // ------------------- DB SETUP ----------------------
@@ -37,6 +43,7 @@ db.serialize(() => {
   `);
 });
 
+
 // helper
 function today() {
   return new Date().toISOString().split("T")[0];
@@ -64,6 +71,16 @@ app.post("/kids", (req, res) => {
         res.json({ id: newKidId, name });
       }
     });
+  });
+});
+
+// Get list of kids
+app.get("/kids", (req, res) => {
+  db.all("SELECT * FROM kids", [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
   });
 });
 
